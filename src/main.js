@@ -58,7 +58,7 @@ const renderOptions = {
 }
 
 let page = 1;
-const itemsPerPage = 200;
+const itemsPerPage = 15;
 let totalPages;
 let searchData = searchInput.value;
 let loadData;
