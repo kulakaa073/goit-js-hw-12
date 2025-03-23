@@ -95,7 +95,6 @@ searchButton.addEventListener('click', async (e) => {
     loadingMessage.classList.remove('visually-hidden'); //deleting and adding element might be better? rethink
     await fetchData(searchData, page, itemsPerPage)
         .then((response) => {
-            console.log(response);
             loadingMessage.classList.add('visually-hidden');
             if (response.data.totalHits > 0) {
                 renderOptions.isPaging = false;
@@ -124,6 +123,7 @@ searchButton.addEventListener('click', async (e) => {
 
 loadMoreButton.addEventListener('click', async (e) => { 
     e.preventDefault();
+    loadMoreButton.classList.add('visually-hidden');
     await fetchData(loadData, page, itemsPerPage)
         .then((response) => {
             loadingMessage.classList.add('visually-hidden');
@@ -142,6 +142,7 @@ loadMoreButton.addEventListener('click', async (e) => {
         })
         .catch((error) => {
             loadingMessage.classList.add('visually-hidden');
+            console.error('Error:', error);
             iziToast.error({title: 'Error', message:'Error fetching results, try again later (check console for details)'});
         });
 })
