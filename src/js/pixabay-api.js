@@ -8,8 +8,10 @@ const params = {
     safesearch: true,
 }
 
-export default function searchRequest(searchData) {
+export default function searchRequest(searchData, pageNumber = 1, pageSize = 15) {
     params.q = searchData;
+    params.page = pageNumber;
+    params.per_page = pageSize;
     return axios.get('', { params });
 }
 

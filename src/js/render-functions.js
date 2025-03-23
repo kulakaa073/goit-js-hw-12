@@ -1,7 +1,5 @@
-import SimpleLightbox from "simplelightbox";
-import "simplelightbox/dist/simple-lightbox.min.css";
-export default function renderData(data) {
-    gallery.innerHTML = '';
+
+export function renderData(data, options) {
     const galleryCollectionTemplate = [];
     data.forEach(item => {
         galleryCollectionTemplate.push(
@@ -26,21 +24,17 @@ export default function renderData(data) {
             </li>`
         );
     });
-    gallery.insertAdjacentHTML('afterbegin', galleryCollectionTemplate.join(''));
-    lightboxGallery.refresh();
+    options.gallery.insertAdjacentHTML('beforeend', galleryCollectionTemplate.join(''));
+    options.lightbox.refresh();
+    if (options.isPaging) {
+        galleryScroll(options.gallery.querySelector(".gallery-link").getBoundingClientRect().height * 2);
+    }
 }
 
-const searchForm = document.querySelector('.form');
-let gallery = document.querySelector('.gallery');
-// moved to html file
-// if (!gallery) {
-//     searchForm.insertAdjacentHTML('afterend', '<ul class="gallery"></ul>');
-//     gallery = document.querySelector('.gallery');
-// }
-
-const lightboxOptions = {
-    captionsData: 'alt',
-    captionDelay: 250
+function galleryScroll(scrollBy) { 
+    window.scrollBy({ top: scrollBy, left: 0, behavior: "smooth" });
 }
 
-const lightboxGallery = new SimpleLightbox('.gallery a', { ...lightboxOptions });
+export function clearGallery(gallery) { 
+    gallery.innerHTML = '';
+}

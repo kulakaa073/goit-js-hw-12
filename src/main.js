@@ -1,19 +1,22 @@
+//#region imports
 import fetchData from './js/pixabay-api';
-import renderData from './js/render-functions';
+import {renderData, clearGallery} from './js/render-functions';
 
 import iziToast from "izitoast";
 import "izitoast/dist/css/iziToast.min.css";
 
+import SimpleLightbox from "simplelightbox";
+import "simplelightbox/dist/simple-lightbox.min.css";
+//#endregion imports
+
+//#region init variables and options
 const searchInput = document.querySelector('input[name="search-text"]');
 const searchButton = document.querySelector('button[type="submit"]');
-const searchForm = document.querySelector('.form');
-
-let loadingMessage = document.querySelector('.loading');
-// moved to html file
-// if (!loadingMessage) {
-//     searchForm.insertAdjacentHTML('afterend', '<p class="loading visually-hidden">Loading images, please wait...<span class="loader"></span></p>');
-//     loadingMessage = document.querySelector('.loading');
-// }
+const gallery = document.querySelector('.gallery');
+const loadingMessage = document.querySelector('.loading');
+const loadMoreButton = document.querySelector('.load-more-button');
+const endOfSearchMessage = document.querySelector('.end-of-search');
+const backToTopButton = document.querySelector('.back-to-top');
 
 const iziToastNoInputSettings = {
     theme: 'dark',
@@ -41,19 +44,78 @@ const iziToastNoImageSettings = {
     progressBarColor: '#B51B1B'
 }
 
-searchButton.addEventListener('click', (e) => {
+const lightboxOptions = {
+    captionsData: 'alt',
+    captionDelay: 250
+}
+
+const lightboxGallery = new SimpleLightbox('.gallery a', { ...lightboxOptions });
+
+const renderOptions = {
+    gallery: gallery,
+    lightbox: lightboxGallery,
+    isPaging: false
+}
+
+let page = 1;
+const itemsPerPage = 200;
+let totalPages;
+let searchData = searchInput.value;
+let loadData;
+//#endregion init variables and options
+
+//#region utils
+function calcPages(totalElements) {
+    totalPages = Math.floor(totalElements / itemsPerPage);
+    console.log('total pages: ' + totalPages);
+}
+
+function iteratePage() {
+    page++;
+}
+
+function resetPages() {
+    page = 1;
+}
+function isLastPage() {
+    return totalPages < page; 
+}
+ //#endregion utils
+
+ //#region event listeners
+searchButton.addEventListener('click', async (e) => {
     e.preventDefault();
-    const searchData = searchInput.value;
-    if (searchData.trim() === '') {
+    clearGallery(gallery);
+    resetPages();
+    console.log('searchData: ' + searchData);
+    endOfSearchMessage.classList.add('visually-hidden');
+    loadMoreButton.classList.add('visually-hidden');
+    if (!searchData || searchData === '') {
         iziToast.show({ ...iziToastNoInputSettings });
         return;
     }
     loadingMessage.classList.remove('visually-hidden'); //deleting and adding element might be better? rethink
-    fetchData(searchData)
+    await fetchData(searchData, page, itemsPerPage)
         .then((response) => {
+            console.log(response);
             loadingMessage.classList.add('visually-hidden');
             if (response.data.totalHits > 0) {
-                renderData(response.data.hits);
+                renderOptions.isPaging = false;
+                renderData(response.data.hits, renderOptions);
+                calcPages(response.data.totalHits);
+                console.log(isLastPage());
+                if (!isLastPage()) {
+                    console.log(renderOptions);
+                    renderOptions.isPaging = true;
+                    iteratePage();
+                    console.log('page '+ page);
+                    loadMoreButton.classList.remove('visually-hidden');
+                    loadData = searchData;
+                    console.log('loadData '+ loadData);
+                }
+                else {
+                    endOfSearchMessage.classList.remove('visually-hidden');
+                }
             }
             else {
                 iziToast.show({ ...iziToastNoImageSettings });
@@ -62,5 +124,40 @@ searchButton.addEventListener('click', (e) => {
         .catch((error) => {
             loadingMessage.classList.add('visually-hidden');
             console.error('Error:', error);
+            iziToast.error({title: 'Error', message:'Error fetching results, try again later (check console for details)'});
         });
 });
+
+loadMoreButton.addEventListener('click', async (e) => { 
+    e.preventDefault();
+    await fetchData(loadData, page, itemsPerPage)
+        .then((response) => {
+            loadingMessage.classList.add('visually-hidden');
+            console.log(response);
+            if (response.data.totalHits > 0) {
+                
+                renderData(response.data.hits, renderOptions);
+                if (!isLastPage()) {
+                    iteratePage();
+                    loadData = searchData;
+                }
+                else {
+                    loadMoreButton.classList.add('visually-hidden');
+                    endOfSearchMessage.classList.remove('visually-hidden');
+                }
+            }
+        })
+        .catch((error) => {
+            loadingMessage.classList.add('visually-hidden');
+            console.error('Error:', error);
+            iziToast.error({title: 'Error', message:'Error fetching results, try again later (check console for details)'});
+        });
+})
+
+backToTopButton.addEventListener('click', (e) => {
+    e.preventDefault();
+    window.scrollTo(0, 0);
+})
+
+searchInput.addEventListener('input', () => searchData = searchInput.value.trim());
+//#endregion event listeners
