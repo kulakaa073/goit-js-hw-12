@@ -128,11 +128,10 @@ loadMoreButton.addEventListener('click', async (e) => {
         .then((response) => {
             loadingMessage.classList.add('visually-hidden');
             if (response.data.totalHits > 0) {
-                
                 renderData(response.data.hits, renderOptions);
                 if (!isLastPage()) {
                     iteratePage();
-                    loadData = searchData;
+                    loadMoreButton.classList.remove('visually-hidden');
                 }
                 else {
                     loadMoreButton.classList.add('visually-hidden');
