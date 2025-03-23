@@ -74,7 +74,6 @@
   flex-wrap: wrap;
   justify-content: center;
   gap: 24px 24px;
-  margin-bottom: 32px;
 }
 
 .gallery-link {
@@ -137,7 +136,6 @@
   color: #ffffff;
   padding: 8px 16px;
   margin: 0 auto;
-  margin-bottom: 32px;
 }
 
 .load-more-button:hover {
@@ -176,4 +174,9 @@
   flex-direction: column;
   gap: 16px;
   align-items: center;
+}
+
+.loader {
+  margin: 0 auto;
+  padding: 32px 0;
 }
