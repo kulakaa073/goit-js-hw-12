@@ -123,6 +123,7 @@ searchButton.addEventListener('click', async (e) => {
 
 loadMoreButton.addEventListener('click', async (e) => { 
     e.preventDefault();
+    loadingMessage.classList.remove('visually-hidden');
     loadMoreButton.classList.add('visually-hidden');
     await fetchData(loadData, page, itemsPerPage)
         .then((response) => {
