@@ -67,7 +67,6 @@ let loadData;
 //#region utils
 function calcPages(totalElements) {
     totalPages = Math.floor(totalElements / itemsPerPage);
-    console.log('total pages: ' + totalPages);
 }
 
 function iteratePage() {
@@ -87,7 +86,6 @@ searchButton.addEventListener('click', async (e) => {
     e.preventDefault();
     clearGallery(gallery);
     resetPages();
-    console.log('searchData: ' + searchData);
     endOfSearchMessage.classList.add('visually-hidden');
     loadMoreButton.classList.add('visually-hidden');
     if (!searchData || searchData === '') {
@@ -103,15 +101,11 @@ searchButton.addEventListener('click', async (e) => {
                 renderOptions.isPaging = false;
                 renderData(response.data.hits, renderOptions);
                 calcPages(response.data.totalHits);
-                console.log(isLastPage());
                 if (!isLastPage()) {
-                    console.log(renderOptions);
                     renderOptions.isPaging = true;
                     iteratePage();
-                    console.log('page '+ page);
                     loadMoreButton.classList.remove('visually-hidden');
                     loadData = searchData;
-                    console.log('loadData '+ loadData);
                 }
                 else {
                     endOfSearchMessage.classList.remove('visually-hidden');
@@ -133,7 +127,6 @@ loadMoreButton.addEventListener('click', async (e) => {
     await fetchData(loadData, page, itemsPerPage)
         .then((response) => {
             loadingMessage.classList.add('visually-hidden');
-            console.log(response);
             if (response.data.totalHits > 0) {
                 
                 renderData(response.data.hits, renderOptions);
@@ -149,7 +142,6 @@ loadMoreButton.addEventListener('click', async (e) => {
         })
         .catch((error) => {
             loadingMessage.classList.add('visually-hidden');
-            console.error('Error:', error);
             iziToast.error({title: 'Error', message:'Error fetching results, try again later (check console for details)'});
         });
 })
