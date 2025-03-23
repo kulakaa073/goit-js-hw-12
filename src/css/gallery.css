@@ -90,7 +90,7 @@
   object-fit: cover;
 }
 
-.gallery-link > ul {
+.gallery-link ul {
   border-width: 0px 1px 1px 1px;
   border-style: solid;
   border-color: #808080;
@@ -101,9 +101,12 @@
   position: absolute;
   bottom: 0;
   left: 0;
+  width: 100%;
 }
 
-.gallery-link > ul p {
+.gallery-link ul p {
+  display: flex;
+  flex-direction: column;
   text-align: center;
   font-family: Montserrat;
   font-weight: 600;
@@ -113,7 +116,7 @@
   color: #2e2f42;
 }
 
-.gallery-link > ul p span {
+.gallery-link ul p span {
   font-family: Montserrat;
   font-weight: 400;
   font-size: 12px;
