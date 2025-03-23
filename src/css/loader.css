@@ -1,4 +1,4 @@
-.loader {
+.loader-circle {
   width: 48px;
   height: 48px;
   border-radius: 50%;
@@ -9,8 +9,8 @@
   box-sizing: border-box;
   animation: rotation 1s linear infinite;
 }
-.loader::after,
-.loader::before {
+.loader-circle::after,
+.loader-circle::before {
   content: '';
   box-sizing: border-box;
   position: absolute;
@@ -28,7 +28,7 @@
   animation: rotationBack 0.5s linear infinite;
   transform-origin: center center;
 }
-.loader::before {
+.loader-circle::before {
   width: 32px;
   height: 32px;
   border-color: #808080 #808080 transparent transparent;
